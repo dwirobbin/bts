@@ -17,12 +17,13 @@ class SpeedBoatFactory extends Factory
     public function definition(): array
     {
         $names = ['Awara'];
-        $statuses = ['Ready', 'Dalam Perjalanan Berangkat', 'Dalam Perjalanan Kembali Pulang'];
+        // $statuses = ['Ready', 'Dalam Perjalanan Berangkat', 'Dalam Perjalanan Kembali Pulang'];
 
         return [
             'name' => fake()->unique()->randomElement($names),
             'owner_id' => 2,
-            'status' => fake()->optional(0.8, NULL)->randomElement($statuses),
+            // 'status' => fake()->optional(0.8, NULL)->randomElement($statuses),
+            'status' => 'Ready',
         ];
     }
 }
