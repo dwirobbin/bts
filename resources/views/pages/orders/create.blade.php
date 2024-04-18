@@ -30,7 +30,7 @@
                                         <x-select id="ticketid-create" name="ticket_data[ticket_id]" emptyOptTxt="Pilih Tiket">
                                             @foreach ($tickets as $ticket)
                                                 <option value="{{ $ticket->id }}" @selected(old('ticket_data.ticket_id'))>
-                                                    {{ 'SpeedBoat: ' . $ticket->airline->name . ', Rute: ' . $ticket->street->from_route . ' - ' . $ticket->street->to_route }}
+                                                    {{ 'SpeedBoat: ' . $ticket->speedBoat->name . ', Rute: ' . $ticket->street->from_route . ' - ' . $ticket->street->to_route . ', Rp.' . number_format($ticket->price, 0, ',', '.') }}
                                                 </option>
                                             @endforeach
                                         </x-select>
@@ -93,7 +93,7 @@
 
                                         <div class="col-md-4 form-group mb-4">
                                             <x-label for="ktpnumber-create">
-                                                KTP<span class="text-danger font-weight-bold">*</span>
+                                                No. KTP<span class="text-danger font-weight-bold">*</span>
                                             </x-label>
                                             <x-input id="ktpnumber-create" name="passenger_data[ktp_number][]" placeholder="KTP"
                                                 value="{{ old('passenger_data.ktp_number.0') }}" />
@@ -151,7 +151,7 @@
 
                                     <div class="col-md-4 form-group mb-4">
                                         <x-label for="senderaccountname-create">
-                                            Pengirim Atas Nama<span class="text-danger font-weight-bold">*</span>
+                                            Nama Rekening Pengirim<span class="text-danger font-weight-bold">*</span>
                                         </x-label>
                                         <x-input id="senderaccountname-create" name="payment_data[senderaccount_name]" placeholder="Nama Lengkap"
                                             value="{{ old('payment_data.senderaccount_name') }}" />
@@ -160,7 +160,7 @@
 
                                     <div class="col-md-4 form-group mb-4">
                                         <x-label for="senderaccountnumber-create">
-                                            Nomor Pengirim<span class="text-danger font-weight-bold">*</span>
+                                            Nomor Rekening Pengirim<span class="text-danger font-weight-bold">*</span>
                                         </x-label>
                                         <x-input id="senderaccountnumber-create" name="payment_data[senderaccount_number]"
                                             placeholder="Nomor Pengirim" value="{{ old('payment_data.senderaccount_number') }}" />
@@ -208,6 +208,29 @@
     <script>
         window.onload = init;
 
+        $(function() {
+            $("input[id='senderaccountnumber-create']").on('input', function(e) {
+                $(e.target).val($(e.target).val().replace(/[^\d.]/ig, "")); // only number
+            });
+        })
+
+        const formatRp = (angka, prefix) => {
+            var number_string = angka.replace(/[^,\d]/g, "").toString(),
+                split = number_string.split(","),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            // tambahkan titik jika yang di input sudah menjadi angka ribuan
+            if (ribuan) {
+                separator = sisa ? "." : "";
+                rupiah += separator + ribuan.join(".");
+            }
+
+            rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+            return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
+        }
+
         function init() {
             const checkPriceBtn = document.getElementById("check-price-btn");
             const ticketId = document.getElementById("ticketid-create");
@@ -225,8 +248,8 @@
                         return response.json();
                     })
                     .then(res => {
-                        totalPrice.value = res.txt;
-                        totalPriceSend.value = res.txt;
+                        totalPrice.value = formatRp((res.txt).toString());
+                        totalPriceSend.value = formatRp((res.txt).toString());
                     })
                     .catch(res => {
                         totalPrice.value = "Harga tiket tidak dapat ditampilkan";

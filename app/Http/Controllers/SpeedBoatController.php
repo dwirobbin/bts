@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Airline;
-use Illuminate\Support\Str;
+use App\Models\{User, SpeedBoat};
+use App\Http\Requests\SpeedBoatRequest;
 use Illuminate\Http\Response;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
-use App\Http\Requests\AirlineRequest;
 
-class AirlineController extends Controller
+class SpeedBoatController extends Controller
 {
     public function index()
     {
-        return view('pages.airlines.index', [
+        return view('pages.speed_boats.index', [
             'title' => 'SpeedBoat',
             'show_sidebar' => true,
         ]);
@@ -22,7 +21,8 @@ class AirlineController extends Controller
     public function getData()
     {
         if (request()->ajax()) {
-            $data = Airline::select('id', 'name', 'owner_id', 'status')
+            $data = SpeedBoat::query()
+                ->select('id', 'name', 'owner_id', 'status')
                 ->with('owner:id,name')
                 ->when(auth()->user()->role->name == 'owner', function ($query) {
                     $query->withWhereHas('owner', fn ($query) => $query->whereId(auth()->id()));
@@ -44,11 +44,11 @@ class AirlineController extends Controller
 
                     if (!preg_match('[customer|driver]', $userLogin->role->name)) {
                         if ($row->owner_id === $userLogin->id || $userLogin->role->name === 'admin') {
-                            $btnAction = "<button type='button' id='edit-airline' data-id='$row->id' class='btn btn-xs btn-warning'>Edit</button>";
+                            $btnAction = "<button type='button' id='edit-speedboat' data-id='$row->id' class='btn btn-xs btn-warning'>Edit</button>";
                         }
 
                         if ($userLogin->role->name === 'admin') {
-                            $btnAction .= "<button type='button' id='delete-airline' data-id='$row->id' data-delete='$row->name' class='btn btn-xs btn-danger ml-1'>Hapus</button>";
+                            $btnAction .= "<button type='button' id='delete-speedboat' data-id='$row->id' data-delete='$row->name' class='btn btn-xs btn-danger ml-1'>Hapus</button>";
                         }
                     }
 
@@ -62,51 +62,55 @@ class AirlineController extends Controller
     public function create()
     {
         if (request()->ajax()) {
-            $ownerDoesntHaveAirline = User::select('id', 'name', 'role_id')
-                ->with(['airline', 'role'])
-                ->doesntHave('airline')
+            $ownerDoesntHaveSpeedBoat = User::query()
+                ->select('id', 'name', 'role_id')
+                ->with(['speedBoat', 'role'])
+                ->doesntHave('speedBoat')
                 ->whereHas('role', fn ($query) => $query->whereName('owner'))
                 ->get();
 
             $statuses = ['Ready'];
 
             return response()->json([
-                'owners' => $ownerDoesntHaveAirline,
+                'owners' => $ownerDoesntHaveSpeedBoat,
                 'statuses' => $statuses,
-            ]);
+            ], Response::HTTP_OK);
         }
     }
 
-    public function store(AirlineRequest $request)
+    public function store(SpeedBoatRequest $request)
     {
         if (request()->ajax()) {
             $request->validated();
 
             try {
-                $owner = User::find($request['owner_id'], ['id']);
+                $owner = User::query()->find($request['owner_id'], ['id']);
 
-                $airline = new Airline();
-                $airline->name = Str::title($request['name']);
-                $airline->owner()->associate($owner);
-                $airline->status = $request['status'] ?? NULL;
-                $airline->save();
+                $speedBoat = new SpeedBoat();
+                $speedBoat->name = Str::title($request['name']);
+                $speedBoat->owner()->associate($owner);
+                $speedBoat->status = $request['status'] ?? NULL;
+                $speedBoat->save();
 
                 return response()->json(
-                    ['success' => 'SpeedBoat: ' . $airline->name . ' berhasil ditambahkan.']
+                    ['success' => 'SpeedBoat: ' . $speedBoat->name . ' berhasil ditambahkan.'],
+                    Response::HTTP_OK
                 );
             } catch (\Exception $ex) {
                 return response()->json(
-                    ['errors' => 'Terjadi suatu kesalahan.']
+                    ['errors' => 'Terjadi suatu kesalahan.'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
         }
     }
 
-    public function edit(Airline $airline)
+    public function edit(SpeedBoat $speedBoat)
     {
         if (request()->ajax()) {
-            $ownerDoesntHaveAirline = User::select('id', 'name', 'role_id')
-                ->with(['airline', 'role'])
+            $ownerDoesntHaveSpeedBoat = User::query()
+                ->select('id', 'name', 'role_id')
+                ->with(['speedBoat', 'role'])
                 ->whereHas('role', fn ($query) => $query->whereName('owner'))
                 ->get();
 
@@ -117,14 +121,14 @@ class AirlineController extends Controller
             ];
 
             return response()->json([
-                'owners'  => $ownerDoesntHaveAirline,
-                'airline' => $airline,
+                'owners'  => $ownerDoesntHaveSpeedBoat,
+                'speedBoat' => $speedBoat,
                 'statuses' => $statuses,
-            ]);
+            ], Response::HTTP_OK);
         }
     }
 
-    public function update(AirlineRequest $request, Airline $airline)
+    public function update(SpeedBoatRequest $request, SpeedBoat $speedBoat)
     {
         if (request()->ajax()) {
             $request->validated();
@@ -133,26 +137,32 @@ class AirlineController extends Controller
                 $status = match (true) {
                     $request['status'] != null => $request['status'],
                     $request['status'] == null => NULL,
-                    default => $airline->status
+                    default => $speedBoat->status
                 };
 
-                $airlineUpdate = Airline::find($airline->id);
-                $airlineUpdate->name = Str::title($request['name']);
-                $airlineUpdate->status = $status;
-                $airlineUpdate->save();
+                $speedBoatUpdate = SpeedBoat::query()->find($speedBoat->id);
+                $speedBoatUpdate->name = Str::title($request['name']);
+                $speedBoatUpdate->status = $status;
+                $speedBoatUpdate->save();
 
-                return response()->json(['success' => 'berhasil diubah.']);
+                return response()->json(
+                    ['success' => 'berhasil diubah.'],
+                    Response::HTTP_OK
+                );
             } catch (\Exception $ex) {
-                return response()->json(['errors' => 'Terjadi suatu kesalahan.']);
+                return response()->json(
+                    ['errors' => 'Terjadi suatu kesalahan.'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
         }
     }
 
-    public function destroy(Airline $airline)
+    public function destroy(SpeedBoat $speedBoat)
     {
         if (request()->ajax()) {
             try {
-                $airline->delete();
+                $speedBoat->delete();
 
                 return response()->json(
                     ['success' => 'Berhasil dihapus.'],
@@ -160,7 +170,7 @@ class AirlineController extends Controller
                 );
             } catch (\Exception $ex) {
                 return response()->json(
-                    ['error' => "Error: Speadboat $airline->name mempunyai data."],
+                    ['error' => "Error: Speadboat $speedBoat->name mempunyai data."],
                     Response::HTTP_INTERNAL_SERVER_ERROR
                 );
             }

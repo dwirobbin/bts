@@ -18,9 +18,9 @@ class PassengerSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        Passenger::create([
-            'order_id' => Order::find(1)->id,
-            'name'     => User::find(4)->name,
+        Passenger::query()->create([
+            'order_id' => Order::query()->find(1)->id,
+            'name'     => User::query()->find(4)->name,
             'id_number' => $faker->nik(),
             'gender'    => 'Laki-laki',
         ]);

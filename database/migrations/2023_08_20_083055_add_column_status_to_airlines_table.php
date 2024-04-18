@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('airlines', function (Blueprint $table) {
+        Schema::table('speed_boats', function (Blueprint $table) {
             $table->enum('status', ['Ready', 'Dalam Perjalanan Berangkat', 'Dalam Perjalanan Kembali Pulang'])->nullable()->after('owner_id');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('airlines', function (Blueprint $table) {
+        Schema::table('speed_boats', function (Blueprint $table) {
             $table->removeColumn('status');
         });
     }

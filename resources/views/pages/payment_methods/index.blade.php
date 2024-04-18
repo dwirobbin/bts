@@ -45,6 +45,8 @@
             </div>
         </div>
     </section>
+
+    @include('pages.payment_methods._edit')
 @endsection
 
 @push('scripts')

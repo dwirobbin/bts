@@ -20,14 +20,14 @@
                     <div class="card">
                         @if (auth()->user()->role->name === 'admin')
                             <div class="card-header">
-                                <x-button class="btn-primary float-left" id="add-new-airline">
+                                <x-button class="btn-primary float-left" id="add-new-speedboat">
                                     <i class="fas fa-plus-circle"></i>&nbsp;{{ $title }}
                                 </x-button>
-                                @include('pages.airlines._create')
+                                @include('pages.speed_boats._create')
                             </div>
                         @endif
                         <div class="card-body">
-                            <table id="airlines-table" class="table table-bordered table-striped" style="width:100%">
+                            <table id="speedboats-table" class="table table-bordered table-striped" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>No.</th>
@@ -46,6 +46,8 @@
             </div>
         </div>
     </section>
+
+    @include('pages.speed_boats._edit')
 @endsection
 
 @push('scripts')
@@ -90,7 +92,7 @@
     <script>
         $(document).ready(function() {
             $.fn.dataTable.ext.errMode = 'none';
-            $('#airlines-table').DataTable({
+            $('#speedboats-table').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,
@@ -190,7 +192,7 @@
                     processing: 'Memproses...',
                 },
                 ajax: {
-                    url: '{{ url('dashboard/airlines/get-data') }}',
+                    url: '{{ url('dashboard/speedboats/get-data') }}',
                 },
                 columns: [{
                         name: 'DT_RowIndex',
@@ -215,10 +217,10 @@
                 ],
             });
 
-            $('#add-new-airline').click(function() {
-                $('#error-create-airline').html('');
+            $('#add-new-speedboat').click(function() {
+                $('#error-create-speedboat').html('');
 
-                $.get(`{{ url('dashboard/airlines/create') }}`, function(data) {
+                $.get(`{{ url('dashboard/speedboats/create') }}`, function(data) {
                     $('#ownerid-create').html('<option value="" selected>Pilih Pemilik</option>');
                     $.each(data.owners, function(_, owner) {
                         $('#ownerid-create').append(new Option(owner.name, owner.id));
@@ -230,23 +232,23 @@
                     })
                 });
 
-                $('#modal-create-airline').modal('show');
+                $('#modal-create-speedboat').modal('show');
             });
 
-            $('#airlines-table').on('click', '#edit-airline', function() {
-                $('#error-edit-airline').html('');
+            $('#speedboats-table').on('click', '#edit-speedboat', function() {
+                $('#error-edit-speedboat').html('');
 
-                let airlineId = $(this).data('id');
+                let speedboatId = $(this).data('id');
 
-                $.get(`{{ url('dashboard/airlines/${airlineId}/edit') }}`, function(data) {
-                    $('#airlineid-edit').val(data.airline.id);
-                    $('#airlinename-edit').val(data.airline.name);
+                $.get(`{{ url('dashboard/speedboats/${speedboatId}/edit') }}`, function(data) {
+                    $('#speedboatid-edit').val(data.speedBoat.id);
+                    $('#speedboatname-edit').val(data.speedBoat.name);
 
                     $('#status-edit').html('<option value="" selected>Pilih Status</option>');
                     $.each(data.statuses, function(_, status) {
                         $('#status-edit').append($('<option>', {
                             value: status,
-                            selected: status == data.airline.status ? status : null,
+                            selected: status == data.speedBoat.status ? status : null,
                             text: status,
                         }));
                     })
@@ -255,21 +257,21 @@
                     $.each(data.owners, function(_, owner) {
                         $('#ownerid-edit').append($('<option>', {
                             value: owner.id,
-                            selected: owner.id == data.airline.owner_id ? owner.id : null,
+                            selected: owner.id == data.speedBoat.owner_id ? owner.id : null,
                             text: owner.name,
                         }));
                     })
 
-                    $('#modal-edit-airline').modal('show');
+                    $('#modal-edit-speedboat').modal('show');
                 });
             });
 
-            $('#airlines-table').on('click', '#delete-airline', function() {
-                let [airlineId, airlineName] = [$(this).data('id'), $(this).data('delete')]
+            $('#speedboats-table').on('click', '#delete-speedboat', function() {
+                let [speedboatId, speedboatName] = [$(this).data('id'), $(this).data('delete')]
 
                 Confirm.fire({
                     title: 'Konfirmasi hapus {{ $title }} !',
-                    html: `Apakah anda yakin ingin menghapus {{ $title }} <b>${airlineName}</b>`,
+                    html: `Apakah anda yakin ingin menghapus {{ $title }} <b>${speedboatName}</b>`,
                     confirmButtonText: 'Ya, Hapus',
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -278,14 +280,14 @@
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                             },
-                            url: `{{ url('dashboard/airlines/${airlineId}/delete') }}`,
+                            url: `{{ url('dashboard/speedboats/${speedboatId}/delete') }}`,
                             success: function(data) {
                                 Toast.fire({
                                     icon: 'success',
                                     title: `${data.success}`
                                 })
 
-                                $("#airlines-table").DataTable().ajax.reload();
+                                $("#speedboats-table").DataTable().ajax.reload();
                             },
                             error: function(jqXHR, status) {
                                 if (status === 'error') {

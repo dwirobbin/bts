@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\User;
+use App\Models\{Role, User};
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\{DB, Hash, Mail};
 use App\Providers\RouteServiceProvider;
 use App\Http\Requests\AuthenticationRequest;
 use Cviebrock\EloquentSluggable\Services\SlugService;
@@ -56,12 +54,15 @@ class AuthenticationController extends Controller
     {
         $slug = SlugService::createSlug(User::class, 'slug', Str::title($request['name']));
 
-        User::create([
-            'name'      => Str::title($request['name']),
-            'slug'      => $slug,
-            'email'     => $request['email'],
-            'password'  => Hash::make($request['password'])
-        ]);
+        $role = Role::query()->whereName('customer')->first();
+
+        $user = new User();
+        $user->name = str($request['name'])->title();
+        $user->slug = $slug;
+        $user->email = $request['email'];
+        $user->password = $request['password'];
+        $user->role()->associate($role);
+        $user->save();
 
         return redirect()->to('/auth/login')->withSuccess('Berhasil daftar, Silahkan login.');
     }

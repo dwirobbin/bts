@@ -19,7 +19,7 @@ class StreetSeeder extends Seeder
         ];
 
         foreach ($streets as $street) {
-            Street::create($street);
+            Street::query()->create($street);
         }
     }
 }

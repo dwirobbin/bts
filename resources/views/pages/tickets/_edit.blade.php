@@ -34,7 +34,7 @@
                             Harga<span class="text-danger font-weight-bold">*</span>
                         </x-label>
                         <div class="col-sm-9">
-                            <x-input type="number" id="price-edit" name="price" placeholder="Harga" />
+                            <x-input type="text" id="price-edit" name="price" placeholder="Harga" />
                         </div>
                     </div>
 
@@ -60,6 +60,15 @@
 @push('_scripts')
     <script>
         $(document).ready(function() {
+
+            $('#price-edit').keyup(function(e) {
+                $(this).val(formatRupiah($(this).val()));
+            });
+
+            $("input[id='stock-edit']").on('input', function(e) {
+                $(e.target).val($(e.target).val().replace(/[^\d.]/ig, "")); // only number
+            })
+
             $('#timepicker-edit').datetimepicker({
                 format: 'HH:mm'
             });

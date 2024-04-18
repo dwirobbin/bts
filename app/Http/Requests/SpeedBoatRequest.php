@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class AirlineRequest extends FormRequest
+class SpeedBoatRequest extends FormRequest
 {
     protected static $NEEDS_AUTHORIZATION = true;
     protected static $ERROR_MESSAGES      = [
@@ -63,8 +63,8 @@ class AirlineRequest extends FormRequest
             'name'  => [
                 'required',
                 'string',
-                Rule::when(request()->isMethod('POST'), Rule::unique('airlines', 'name')->where(fn ($query) => $query->where('name', $this->name))),
-                Rule::when(request()->isMethod('PUT'), Rule::unique('airlines', 'name')->ignore($this->name, 'name'))
+                Rule::when(request()->isMethod('POST'), Rule::unique('speed_boats', 'name')->where(fn ($query) => $query->where('name', $this->name))),
+                Rule::when(request()->isMethod('PUT'), Rule::unique('speed_boats', 'name')->ignore($this->name, 'name'))
             ],
             'owner_id' => [
                 Rule::when(request()->isMethod('POST'), 'required'),

@@ -1,21 +1,21 @@
-<div class="modal fade" id="modal-edit-airline">
+<div class="modal fade" id="modal-edit-speedboat">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="form-edit-airline" method="post">
+            <form id="form-edit-speedboat" method="post">
                 <div class="modal-header">
                     <h4 class="modal-title">Edit {{ $title }}</h4>
                     <x-button class="close" data-dismiss="modal"><span>&times;</span></x-button>
                 </div>
                 <div class="modal-body pb-2">
-                    <ul id="error-edit-airline" class="pl-0 mb-0"></ul>
+                    <ul id="error-edit-speedboat" class="pl-0 mb-0"></ul>
 
-                    <x-input type="hidden" id="airlineid-edit" name="airline_id" />
+                    <x-input type="hidden" id="speedboatid-edit" name="speedboat_id" />
 
                     <div class="form-group mb-3">
-                        <x-label for="airlinename-edit">
+                        <x-label for="speedboatname-edit">
                             Nama {{ $title }}<span class="text-danger font-weight-bold">*</span>
                         </x-label>
-                        <x-input id="airlinename-edit" name="name" placeholder="Nama {{ $title }}" />
+                        <x-input id="speedboatname-edit" name="name" placeholder="Nama {{ $title }}" />
                     </div>
 
                     @if (auth()->user()->role->name == 'admin')
@@ -45,34 +45,34 @@
 @push('_scripts')
     <script>
         $(document).ready(function() {
-            $('#modal-edit-airline').on('hidden.bs.modal', function(e) {
-                $(this).find('#form-edit-airline')[0].reset();
+            $('#modal-edit-speedboat').on('hidden.bs.modal', function(e) {
+                $(this).find('#form-edit-speedboat')[0].reset();
             });
 
-            $('#form-edit-airline').on('submit', function(e) {
+            $('#form-edit-speedboat').on('submit', function(e) {
                 e.preventDefault();
 
-                let [formData, airlineId] = [$(this).serializeArray(), $("#airlineid-edit").val()];
+                let [formData, speedboatId] = [$(this).serializeArray(), $("#speedboatid-edit").val()];
 
                 $.ajax({
                         method: 'PUT',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                         },
-                        url: `{{ url('dashboard/airlines/${airlineId}/update') }}`,
+                        url: `{{ url('dashboard/speedboats/${speedboatId}/update') }}`,
                         data: formData,
                         dataType: 'json',
                     })
                     .done(function(data) {
-                        $('#modal-edit-airline').modal('hide');
-                        $('#form-edit-airline')[0].reset();
+                        $('#modal-edit-speedboat').modal('hide');
+                        $('#form-edit-speedboat')[0].reset();
 
                         Toast.fire({
                             icon: 'success',
                             title: `${data.success}`
                         });
 
-                        $("#airlines-table").DataTable().ajax.reload();
+                        $("#speedboats-table").DataTable().ajax.reload();
                     })
                     .fail(function(jqXHR, status) {
                         if (status === 'error') {
@@ -88,7 +88,7 @@
                                 );
                             }, 5000);
 
-                            $('#error-edit-airline').html(html);
+                            $('#error-edit-speedboat').html(html);
                         }
                     })
             });

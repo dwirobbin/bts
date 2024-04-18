@@ -35,7 +35,7 @@
                                         <th>Email</th>
                                         <th>No. Hp</th>
                                         <th>Jenis Kelamin</th>
-                                        <th>Pemilik dari Maskapai</th>
+                                        <th>Pemilik dari SpeedBoat</th>
                                         <th>Role</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -49,6 +49,8 @@
             </div>
         </div>
     </section>
+
+    @include('pages.users._edit')
 @endsection
 
 @push('scripts')
@@ -227,8 +229,8 @@
                         data: 'gender',
                     },
                     {
-                        name: 'airline_name',
-                        data: 'airline_name',
+                        name: 'speedboat_name',
+                        data: 'speedboat_name',
                     },
                     {
                         name: 'role.name',
@@ -265,6 +267,7 @@
                 let userId = $(this).data('id');
 
                 $.get(`{{ url('dashboard/users/${userId}/edit') }}`, function(data) {
+                    console.log(data.user);
                     $('#userid-edit').val(data.user.id);
                     $('#username-edit').val(data.user.name);
                     $('#useremail-edit').val(data.user.email);

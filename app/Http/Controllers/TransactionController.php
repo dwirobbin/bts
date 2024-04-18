@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use Illuminate\Http\{Request, Response};
+use Illuminate\Support\Facades\{Storage, Validator};
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -23,25 +21,26 @@ class TransactionController extends Controller
     public function getData()
     {
         if (request()->ajax()) {
-            $query = Transaction::query()->with([
-                'order' => fn ($query) => $query->with([
-                    'user:id,name',
-                    'ticket' => fn ($query) => $query->with(['airline:id', 'street:id'])
-                ]),
-                'paymentMethod:id,method,target_account',
-            ]);
+            $query = Transaction::query()
+                ->with([
+                    'order' => fn ($query) => $query->with([
+                        'user:id,name',
+                        'ticket' => fn ($query) => $query->with(['speedBoat:id', 'street:id'])
+                    ]),
+                    'paymentMethod:id,method,target_account',
+                ]);
 
             if (auth()->user()->role->name === 'owner') {
-                $query->whereHas('order', fn ($q) => $q->whereHas('ticket', fn ($q) => $q->whereHas('airline', fn ($q) => $q->whereOwnerId(auth()->user()->id))));
+                $query->whereHas('order', fn ($q) => $q->whereHas('ticket', fn ($q) => $q->whereHas('speedBoat', fn ($q) => $q->whereOwnerId(auth()->id()))));
             }
 
             if (auth()->user()->role->name === 'customer') {
-                $query->whereHas('order', fn ($q) => $q->whereUserId(auth()->user()->id));
+                $query->whereHas('order', fn ($q) => $q->whereUserId(auth()->id()));
             }
 
             return DataTables::of($query->orderByDesc('updated_at')->get())
                 ->addIndexColumn()
-                ->editColumn('total', fn ($row) => number_format($row->total, 2, ',', '.'))
+                ->editColumn('total', fn ($row) => number_format($row->total, 0, ',', '.'))
                 ->editColumn(
                     'status',
                     fn ($row) => $row->status
@@ -56,7 +55,7 @@ class TransactionController extends Controller
                 )
                 ->addColumn('action', function ($row) {
                     if (!preg_match('[driver]', auth()->user()->role->name)) {
-                        if (auth()->user()->role->name === 'customer') {
+                        if (auth()->user()->role->name === 'customer' && $row->status != true) {
                             $btnAction = "<button type='button' id='upload-img' data-id='$row->id' class='btn btn-xs btn-primary'>Unggah Bukti Pembayaran</button>";
                         }
 
@@ -74,12 +73,12 @@ class TransactionController extends Controller
 
     public function edit(Transaction $transaction)
     {
-        if (request()->ajax()) {
-            return response()->json(
+        return request()->ajax()
+            ? response()->json(
                 ['transaction' => $transaction->load('order.passengers')],
                 Response::HTTP_OK
-            );
-        }
+            )
+            : response()->noContent();
     }
 
     public function storeImg(Request $request, Transaction $transaction)

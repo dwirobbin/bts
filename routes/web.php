@@ -1,16 +1,18 @@
 <?php
 
-use App\Http\Controllers\AirlineController;
-use App\Http\Controllers\AuthenticationController;
-use App\Http\Controllers\ComplaintController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PaymentMethodController;
-use App\Http\Controllers\PrintController;
-use App\Http\Controllers\StreetController;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\{
+    SpeedBoatController,
+    AuthenticationController,
+    ComplaintController,
+    DashboardController,
+    OrderController,
+    PaymentMethodController,
+    PrintController,
+    StreetController,
+    TicketController,
+    TransactionController,
+    UserController,
+};
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,14 +51,14 @@ Route::prefix('/auth')->middleware('guest')->controller(AuthenticationController
 Route::prefix('/dashboard')->middleware('auth')->group(function () {
     Route::get('/index', DashboardController::class);
 
-    Route::prefix('/airlines')->controller(AirlineController::class)->group(function () {
+    Route::prefix('/speedboats')->controller(SpeedBoatController::class)->group(function () {
         Route::get('/index', 'index');
         Route::get('/get-data', 'getData');
         Route::get('/create', 'create');
         Route::post('/store', 'store');
-        Route::get('/{airline:id}/edit', 'edit');
-        Route::put('/{airline:id}/update', 'update');
-        Route::delete('/{airline:id}/delete', 'destroy');
+        Route::get('/{speedBoat:id}/edit', 'edit');
+        Route::put('/{speedBoat:id}/update', 'update');
+        Route::delete('/{speedBoat:id}/delete', 'destroy');
     });
 
     Route::prefix('/streets')->controller(StreetController::class)->group(function () {
@@ -100,7 +102,11 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
         });
     });
 
-    Route::post('complaints', [ComplaintController::class, 'store']);
+    Route::prefix('complaints')->controller(ComplaintController::class)->group(function () {
+        Route::post('/', 'store');
+        Route::get('/complaints/{order:id}', 'show');
+    });
+
     Route::get('print', PrintController::class);
 
     Route::prefix('/transactions/history')->controller(TransactionController::class)->group(function () {

@@ -28,7 +28,7 @@
                                                 <div class="input-group mb-3">
                                                     <input type="text" id="name" name="name"
                                                         class="form-control @error('name') is-invalid @enderror" placeholder="Nama Lengkap"
-                                                        value="{{ old('name') }}" autofocus>
+                                                        value="{{ old('name') }}" tabindex="1" autofocus>
                                                     <div class="input-group-append">
                                                         <div class="input-group-text">
                                                             <span class="fas fa-user"></span>
@@ -44,7 +44,7 @@
                                                 <div class="input-group mb-3">
                                                     <input type="email" id="email" name="email"
                                                         class="form-control @error('email') is-invalid @enderror" placeholder="Email"
-                                                        value="{{ old('email') }}">
+                                                        value="{{ old('email') }}" tabindex="2">
                                                     <div class="input-group-append">
                                                         <div class="input-group-text">
                                                             <span class="fas fa-envelope"></span>
@@ -60,13 +60,14 @@
                                         <div class="col-md-6">
                                             <div class="form-group mb-3">
                                                 <label for="pasword">Password</label>
-                                                <button id="toggle-password" type="button" class="btn btn-transparent border-0 p-0 float-right">
+                                                <button id="toggle-password" type="button" class="btn btn-transparent border-0 p-0 float-right"
+                                                    tabindex="7">
                                                     Lihat password
                                                 </button>
                                                 <div class="input-group mb-3">
                                                     <input type="password" id="password" name="password"
                                                         class="form-control @error('password') is-invalid @enderror" placeholder="Password"
-                                                        value="{{ old('password') }}">
+                                                        value="{{ old('password') }}" tabindex="3">
                                                     <div class="input-group-append">
                                                         <div class="input-group-text">
                                                             <span class="fas fa-lock"></span>
@@ -84,7 +85,7 @@
                                                     <input type="password" id="password-confirmation" name="password_confirmation"
                                                         class="form-control @error('password_confirmation') is-invalid @enderror"
                                                         autocomplete="current-password" placeholder="Ulangi Password"
-                                                        value="{{ old('password_confirmation') }}">
+                                                        value="{{ old('password_confirmation') }}" tabindex="4">
                                                     <div class="input-group-append">
                                                         <div class="input-group-text">
                                                             <span class="fas fa-undo"></span>
@@ -98,11 +99,11 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+                                    <button type="submit" class="btn btn-primary btn-block" tabindex="5">Sign Up</button>
                                 </form>
 
                                 <p class="mt-3 mb-0 text-center">
-                                    <a href="{{ url('auth/login') }}" class="text-center">Login</a>
+                                    <a href="{{ url('auth/login') }}" class="text-center" tabindex="6">Login</a>
                                 </p>
                             </div>
                         </div>

@@ -2,18 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Airline;
-use App\Models\User;
+use App\Models\SpeedBoat;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class AirlineSeeder extends Seeder
+class SpeedBoatSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Airline::factory(1)->create();
+        SpeedBoat::factory(1)->create();
     }
 }

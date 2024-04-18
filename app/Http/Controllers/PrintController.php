@@ -9,7 +9,9 @@ class PrintController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $order = Order::where('order_code', $request['order'])->first();
+        $order = Order::query()
+            ->where('order_code', $request['order'])
+            ->first();
 
         if (preg_match('[admin|owner]', auth()->user()->role->name)) {
             return view('pages.orders.print', [
@@ -18,9 +20,11 @@ class PrintController extends Controller
                 'show_sidebar' => false,
             ]);
         } else {
-            $transactionCompleted = Order::whereOrderCode($request['order'])->first()->transaction->status;
+            $transactionCompleted = Order::query()
+                ->whereOrderCode($request['order'])
+                ->first()->transaction->status;
             if ($transactionCompleted) {
-                if (auth()->user()->id != $order->user->id) {
+                if (auth()->id() != $order->user->id) {
                     return redirect()->to('orders/history/index');
                 }
 

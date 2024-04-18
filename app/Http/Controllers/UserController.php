@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
-use App\Models\User;
+use App\Models\{Role, User};
 use Illuminate\Http\Response;
 use Yajra\DataTables\DataTables;
 use App\Http\Requests\UserRequest;
@@ -21,13 +20,15 @@ class UserController extends Controller
     public function getData()
     {
         if (request()->ajax()) {
-            $data = User::select('id', 'name', 'email', 'phone_number', 'gender', 'role_id')
-                ->with(['airline', 'role:id,name'])
+            $data = User::query()
+                ->select('id', 'name', 'email', 'phone_number', 'gender', 'role_id')
+                ->with(['speedBoat', 'role:id,name'])
                 ->when(
                     auth()->user()->role->name != 'admin',
-                    fn ($query) => $query->whereId(auth()->user()->id)
+                    fn ($query) => $query->whereId(auth()->id())
                 )
-                ->orderByDesc('updated_at')->get();
+                ->orderByDesc('updated_at')
+                ->get();
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -40,15 +41,15 @@ class UserController extends Controller
                     fn ($row) => $row->gender ?? 'Belum di set'
                 )
                 ->editColumn(
-                    'airline_name',
-                    fn ($row) => $row->airline->name ?? 'Tidak Punya'
+                    'speedboat_name',
+                    fn ($row) => $row->speedBoat->name ?? 'Tidak Punya'
                 )
                 ->addColumn(
                     'action',
                     function ($row) {
                         $btnAction = "<button type='button' id='edit-user' data-id='$row->id' class='btn btn-xs btn-warning'>Edit</button>";
 
-                        if ($row->id != auth()->user()->id) {
+                        if ($row->id != auth()->id()) {
                             $btnAction .= "<button type='button' id='delete-user' data-id='$row->id' data-delete='$row->name' class='btn btn-xs btn-danger ml-1'>Hapus</button>";
                         }
 
@@ -63,7 +64,10 @@ class UserController extends Controller
     public function create()
     {
         if (request()->ajax()) {
-            $roles = Role::select('id', 'name')->where('name', '!=', 'admin')->get();
+            $roles = Role::query()
+                ->select('id', 'name')
+                ->where('name', '!=', 'admin')
+                ->get();
 
             return response()->json(
                 ['roles' => $roles],
@@ -78,7 +82,7 @@ class UserController extends Controller
             $request->validated();
 
             try {
-                $role = Role::find($request['role_id'], ['id']);
+                $role = Role::query()->find($request['role_id'], ['id']);
 
                 $user = new User();
                 $user->name = str($request['name'])->title();
@@ -95,7 +99,8 @@ class UserController extends Controller
                 );
             } catch (\Exception $ex) {
                 return response()->json(
-                    ['errors' => 'Terjadi suatu kesalahan.']
+                    ['errors' => 'Terjadi suatu kesalahan.'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
         }
@@ -104,13 +109,13 @@ class UserController extends Controller
     public function edit(User $user)
     {
         if (request()->ajax()) {
-            $query = Role::select('id', 'name');
+            $query = Role::query()->select('id', 'name');
 
             if (preg_match('[owner]', auth()->user()->role->name)) {
                 $query->where('name', '!=', 'admin');
             }
 
-            if ($user->id !== auth()->user()->id) {
+            if ($user->id !== auth()->id()) {
                 $query->where('name', '!=', 'admin');
             }
 
@@ -130,9 +135,9 @@ class UserController extends Controller
             $request->validated();
 
             try {
-                $role = Role::find($request['role_id'] ?? $user->role_id, ['id']);
+                $role = Role::query()->find($request['role_id'] ?? $user->role_id, ['id']);
 
-                $user = User::find($user->id);
+                $user = User::query()->find($user->id);
                 $user->name = str($request['name'])->title();
                 $user->email = $request['email'];
                 $user->gender = $request['gender'];
@@ -146,7 +151,8 @@ class UserController extends Controller
                 );
             } catch (\Exception $ex) {
                 return response()->json(
-                    ['errors' => 'Terjadi suatu kesalahan.']
+                    ['errors' => 'Terjadi suatu kesalahan.'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
         }

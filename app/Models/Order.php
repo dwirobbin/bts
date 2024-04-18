@@ -5,9 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\{HasOne, HasMany, BelongsTo};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
@@ -19,7 +17,9 @@ class Order extends Model
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = [
+        'id',
+    ];
 
     public function goDate(): Attribute
     {
@@ -27,24 +27,6 @@ class Order extends Model
             get: fn ($value) => Carbon::parse($value)->format('d/m/Y'),
         );
     }
-
-    /**
-     * Get the
-     *
-     * @param  string  $value
-     * @return string
-     */
-    // public function getBackDateAttribute($value)
-    // {
-    //     return Carbon::parse($value)->format('d/m/Y');
-    // }
-
-    // public function backDate(): Attribute
-    // {
-    //     return new Attribute(
-    //         get: fn ($value) => Carbon::parse($value)->format('d/m/Y'),
-    //     );
-    // }
 
     /**
      * Get the user that owns the Order

@@ -11,11 +11,11 @@
                     <ul id="error-create-ticket" class="pl-0 mb-0"></ul>
 
                     <div class="form-group row">
-                        <x-label for="airlineid-create" class="col-sm-3 col-form-label">
+                        <x-label for="speedboatid-create" class="col-sm-3 col-form-label">
                             Speedboat<span class="text-danger font-weight-bold">*</span>
                         </x-label>
                         <div class="col-sm-9">
-                            <x-select id="airlineid-create" name="airline_id" emptyOptTxt="Pilih Speedboat" />
+                            <x-select id="speedboatid-create" name="speedboat_id" emptyOptTxt="Pilih Speedboat" />
                         </div>
                     </div>
 
@@ -51,7 +51,7 @@
                             Harga<span class="text-danger font-weight-bold">*</span>
                         </x-label>
                         <div class="col-sm-9">
-                            <x-input type="number" id="price-create" name="price" placeholder="Harga" />
+                            <x-input type="text" id="price-create" name="price" placeholder="Harga" />
                         </div>
                     </div>
 
@@ -77,6 +77,15 @@
 @push('_scripts')
     <script>
         $(document).ready(function() {
+
+            $('#price-create').keyup(function(e) {
+                $(this).val(formatRupiah($(this).val()));
+            });
+
+            $("input[id='stock-create']").on('input', function(e) {
+                $(e.target).val($(e.target).val().replace(/[^\d.]/ig, "")); // only number
+            })
+
             $('#timepicker').datetimepicker({
                 format: 'HH:mm'
             });

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->constrained();
             $table->foreignId('user_id')->constrained();
-            $table->string('body');
+            $table->text('body');
             $table->boolean('seen')->default(false);
             $table->boolean('seen_for_admin')->default(false);
             $table->timestamp('created_at')->useCurrent();

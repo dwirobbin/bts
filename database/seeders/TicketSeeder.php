@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Street;
-use App\Models\Airline;
+use App\Models\SpeedBoat;
 use App\Models\Ticket;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -17,15 +17,15 @@ class TicketSeeder extends Seeder
     {
         $tickets = [
             [
-                'airline_id'    => Airline::find(1)->id,
-                'street_id'     => Street::find(1)->id,
+                'speedboat_id'  => SpeedBoat::query()->find(1)->id,
+                'street_id'     => Street::query()->find(1)->id,
                 'hours_of_departure' => '14:00:00',
                 'price'         => 100000,
                 'stock'         => 50,
             ],
             [
-                'airline_id'    => Airline::find(1)->id,
-                'street_id'     => Street::find(2)->id,
+                'speedboat_id'  => SpeedBoat::query()->find(1)->id,
+                'street_id'     => Street::query()->find(2)->id,
                 'hours_of_departure' => '12:15:00',
                 'price'         => 100000,
                 'stock'         => 100,

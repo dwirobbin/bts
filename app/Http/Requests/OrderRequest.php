@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Ticket;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class OrderRequest extends FormRequest
@@ -20,9 +18,9 @@ class OrderRequest extends FormRequest
         'ticket_data.trip_type'   => 'Jenis Perjalanan',
         'ticket_data.go_date'   => 'Tanggal Pergi',
         'ticket_data.back_date'   => 'Tanggal Pulang',
-        'passenger_data.name.0'   => 'Nama Penumpang',
-        'passenger_data.ktp_number.0'   => 'No. Ktp Penumpang',
-        'passenger_data.gender.0'   => 'Jenis Kelamin Penumpang',
+        'passenger_data.name.*'   => 'Nama Penumpang',
+        'passenger_data.ktp_number.*'   => 'No. Ktp Penumpang',
+        'passenger_data.gender.*'   => 'Jenis Kelamin Penumpang',
         'payment_data.total_price'   => 'Total Harga',
         'payment_data.paymentmethod_id'   => 'Metode Pembayaran',
         'payment_data.senderaccount_name'   => 'Nama Akun Pengirim',
@@ -74,16 +72,23 @@ class OrderRequest extends FormRequest
 
         return [
             'ticket_data.ticket_id'             => ['required'],
-            'ticket_data.trip_type'             => ['required'],
+            'ticket_data.trip_type'             => ['required', 'string'],
             'ticket_data.go_date'               => ['required'],
             'ticket_data.back_date'             => $backDateRule,
-            'passenger_data.name.0'             => ['required'],
-            'passenger_data.ktp_number.0'       => ['required', 'min:16', 'max:20'],
-            'passenger_data.gender.0'           => ['required'],
+            'passenger_data.name.*'             => ['required', 'string'],
+            'passenger_data.ktp_number.*'       => ['required', 'min:16', 'max:20'],
+            'passenger_data.gender.*'           => ['required', 'string', 'in:Laki-laki,Perempuan'],
             'payment_data.total_price'          => ['required', 'numeric'],
             'payment_data.paymentmethod_id'     => ['required'],
-            'payment_data.senderaccount_name'   => ['required'],
+            'payment_data.senderaccount_name'   => ['required', 'string'],
             'payment_data.senderaccount_number' => ['required', 'numeric'],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'payment_data.total_price' => str_replace('.', '', $this->payment_data['total_price']),
+        ]);
     }
 }

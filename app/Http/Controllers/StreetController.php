@@ -20,7 +20,8 @@ class StreetController extends Controller
     public function getData()
     {
         if (request()->ajax()) {
-            $data = Street::select('id', 'from_route', 'to_route')
+            $data = Street::query()
+                ->select('id', 'from_route', 'to_route')
                 ->orderByDesc('updated_at')
                 ->get();
 
@@ -44,7 +45,12 @@ class StreetController extends Controller
         if (request()->ajax()) {
             $validatedData = $request->validated();
 
-            if (Street::whereFromRoute($request['from_route'])->whereToRoute($request['to_route'])->first()) {
+            $isExists = Street::query()
+                ->whereFromRoute($request['from_route'])
+                ->whereToRoute($request['to_route'])
+                ->first();
+
+            if ($isExists) {
                 return response()->json(
                     ['same_route' => 'Rute tersebut sudah ada di database!'],
                     Response::HTTP_CONFLICT
@@ -52,23 +58,26 @@ class StreetController extends Controller
             }
 
             try {
-                Street::create($validatedData);
+                Street::query()->create($validatedData);
 
                 return response()->json(
                     ['success' => 'Rute berhasil ditambahkan!'],
                     Response::HTTP_OK
                 );
             } catch (\Exception $ex) {
-                return response()->json(['errors' => 'Terjadi suatu kesalahan!']);
+                return response()->json(
+                    ['errors' => 'Terjadi suatu kesalahan!'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
         }
     }
 
     public function edit(Street $street)
     {
-        if (request()->ajax()) {
-            return response()->json(['street' => $street]);
-        }
+        return request()->ajax()
+            ? response()->json(['street' => $street], Response::HTTP_OK)
+            : response()->noContent();
     }
 
     public function update(StreetRequest $request, Street $street)
@@ -76,7 +85,8 @@ class StreetController extends Controller
         if (request()->ajax()) {
             $validatedData = $request->validated();
 
-            $sameRoute = Street::where('id', '!=', $street->id)
+            $sameRoute = Street::query()
+                ->where('id', '!=', $street->id)
                 ->whereFromRoute($request['from_route'])
                 ->whereToRoute($request['to_route'])
                 ->first();
@@ -91,9 +101,15 @@ class StreetController extends Controller
             try {
                 $street->update($validatedData);
 
-                return response()->json(['success' => 'Berhasil diubah.']);
+                return response()->json(
+                    ['success' => 'Berhasil diubah.'],
+                    Response::HTTP_OK
+                );
             } catch (\Exception $ex) {
-                return response()->json(['errors' => 'Terjadi suatu kesalahan.']);
+                return response()->json(
+                    ['errors' => 'Terjadi suatu kesalahan.'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
         }
     }

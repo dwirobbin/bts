@@ -16,7 +16,7 @@ class TicketRequest extends FormRequest
         'numeric'    => ':attribute harus berupa angka.',
     ];
     protected static $ATTRIBUTE_NAMES     = [
-        'airline_id'   => 'Maskapai',
+        'speedboat_id'   => 'Speed Boat',
         'street_id'   => 'Rute',
         'hours_of_departure' => 'Jam keberangkatan',
         'price'   => 'Harga',
@@ -61,20 +61,27 @@ class TicketRequest extends FormRequest
     public function rules(): array
     {
         if (request()->isMethod('POST')) {
-            $airlineIdRule = ['required'];
+            $speedboatIdRule = ['required'];
             $streetIdRule = ['required'];
         } elseif (request()->isMethod('PUT')) {
-            $airlineIdRule = ['nullable'];
+            $speedboatIdRule = ['nullable'];
             $streetIdRule = ['nullable'];
         }
 
         return [
-            'airline_id'    => $airlineIdRule,
+            'speedboat_id'    => $speedboatIdRule,
             'street_id'     => $streetIdRule,
             'hours_of_departure' => ['required'],
             'price'         => ['required', 'numeric'],
             'stock'         => ['required', 'numeric'],
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'price' => str_replace('.', '', $this->price),
+        ]);
     }
 
     /**
@@ -100,7 +107,7 @@ class TicketRequest extends FormRequest
     public function passedValidation(): void
     {
         if (request()->isMethod('POST')) {
-            $sameTicket = Ticket::whereAirlineId($this->airline_id)->whereStreetId($this->street_id)->first();
+            $sameTicket = Ticket::whereSpeedboatId($this->speedboat_id)->whereStreetId($this->street_id)->first();
 
             if ($sameTicket) {
                 throw new HttpResponseException(response()->json(

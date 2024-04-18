@@ -9,17 +9,8 @@
             <div class="modal-body d-flex flex-column">
                 <ul id="error-complaint" class="pl-0 mb-0"></ul>
 
-                @foreach ($order->complaints as $complaint)
-                    <div class="d-flex flex-row align-items-center mb-2 @if ($complaint->user->id == Auth::id()) justify-content-end @endif">
-                        <img src="{{ asset('app-src/img/default_profile.jpg') }}" alt="Profile Image" style="max-width: 30px; max-height: 30px"
-                            class="rounded-circle mx-2">
+                <div id="complaint-chats"></div>
 
-                        <label class="my-1">{{ $complaint->user->name }}</label>
-                    </div>
-                    <p class="border rounded mx-2 mb-4 p-2 font-weight-normal text-left">
-                        {{ $complaint->body }}
-                    </p>
-                @endforeach
             </div>
 
             <form action="{{ url('dashboard/complaints') }}" id="form-complaint" method="POST" class="d-inline">
@@ -30,7 +21,7 @@
                     </div>
 
                     <div class="col-sm-8 d-flex flex-row">
-                        <input type="hidden" id="order-id" name="order_id" value={{ $order->id }}>
+                        <input type="hidden" id="order-id" name="order_id">
                         <input type="text" class="form-control" name="body">
 
                         <x-button type="submit" class="btn-success">Kirim</x-button>
@@ -66,6 +57,7 @@
                         location.reload()
                     })
                     .fail(function(jqXHR, status) {
+                        console.log(jqXHR);
                         if (status === 'error') {
                             let html = '<div class="alert alert-danger py-2">';
                             $.each(jqXHR.responseJSON.errors, function(_, val) {

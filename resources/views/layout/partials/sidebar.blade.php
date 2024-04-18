@@ -10,7 +10,7 @@
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-header">MENU'S</li>
+                <li class="nav-header">MENU</li>
                 @auth
 
                     <li class="nav-item">
@@ -22,8 +22,8 @@
 
                     @if (preg_match('[admin|owner|driver]', auth()->user()->role->name))
                         <li class="nav-item">
-                            <a href="{{ url('dashboard/airlines/index') }}"
-                                class="nav-link  {{ request()->is('dashboard/airlines/index') ? 'active' : null }}">
+                            <a href="{{ url('dashboard/speedboats/index') }}"
+                                class="nav-link  {{ request()->is('dashboard/speedboats/index') ? 'active' : null }}">
                                 <i class="nav-icon fas fa-ship"></i>
                                 <p>SpeedBoat</p>
                             </a>

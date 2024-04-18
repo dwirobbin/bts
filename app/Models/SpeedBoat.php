@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Airline extends Model
+class SpeedBoat extends Model
 {
     use HasFactory;
 
@@ -15,10 +15,14 @@ class Airline extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'owner_id', 'status'];
+    protected $fillable = [
+        'name',
+        'owner_id',
+        'status',
+    ];
 
     /**
-     * Get the owner that owns the Airline
+     * Get the owner that owns the SpeedBoat
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

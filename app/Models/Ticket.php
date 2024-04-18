@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,16 +15,22 @@ class Ticket extends Model
      *
      * @var array
      */
-    protected $fillable = ['airline_id', 'street_id', 'hours_of_departure', 'price', 'stock'];
+    protected $fillable = [
+        'speedboat_id',
+        'street_id',
+        'hours_of_departure',
+        'price',
+        'stock',
+    ];
 
     /**
-     * Get the airline that owns the Ticket
+     * Get the speedboat that owns the Ticket
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function airline(): BelongsTo
+    public function speedBoat(): BelongsTo
     {
-        return $this->belongsTo(Airline::class);
+        return $this->belongsTo(SpeedBoat::class, 'speedboat_id', 'id');
     }
 
     /**

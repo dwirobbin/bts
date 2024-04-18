@@ -4,8 +4,7 @@ namespace App\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\{HasMany, BelongsTo};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PaymentMethod extends Model
@@ -17,7 +16,11 @@ class PaymentMethod extends Model
      *
      * @var array
      */
-    protected $fillable = ['method', 'target_account', 'created_by'];
+    protected $fillable = [
+        'method',
+        'target_account',
+        'created_by',
+    ];
 
     /**
      * Get the createdBy that owns the PaymentMethod

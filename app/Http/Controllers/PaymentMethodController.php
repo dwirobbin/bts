@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\PaymentMethod;
+use App\Models\{User, PaymentMethod};
+use App\Http\Requests\PaymentMethodRequest;
 use Illuminate\Http\Response;
 use Yajra\DataTables\DataTables;
-use App\Http\Requests\PaymentMethodRequest;
 
 class PaymentMethodController extends Controller
 {
@@ -21,11 +20,12 @@ class PaymentMethodController extends Controller
     public function getData()
     {
         if (request()->ajax()) {
-            $query = PaymentMethod::select('id', 'method', 'target_account', 'created_by')
+            $query = PaymentMethod::query()
+                ->select('id', 'method', 'target_account', 'created_by')
                 ->with(['createdBy:id,name']);
 
             if (auth()->user()->role->name === 'owner') {
-                $query->whereCreatedBy(auth()->user()->id);
+                $query->whereCreatedBy(auth()->id());
             }
 
             return DataTables::of($query->orderByDesc('updated_at')->get())
@@ -45,11 +45,16 @@ class PaymentMethodController extends Controller
 
     public function create()
     {
-        if (request()->ajax() && auth()->user()->role->name === 'admin') {
-            return response()->json([
-                'owners' => User::whereHas('role', fn ($q) => $q->whereName('owner'))->get(),
-            ]);
-        }
+        return request()->ajax() && auth()->user()->role->name === 'admin'
+            ? response()->json(
+                [
+                    'owners' => User::query()
+                        ->whereHas('role', fn ($q) => $q->whereName('owner'))
+                        ->get()
+                ],
+                Response::HTTP_OK
+            )
+            : response()->noContent();
     }
 
     public function store(PaymentMethodRequest $request)
@@ -58,18 +63,20 @@ class PaymentMethodController extends Controller
             $request->validated();
 
             try {
-                PaymentMethod::create([
+                PaymentMethod::query()->create([
                     'method' => $request['method'],
                     'target_account' => $request['target_account'],
-                    'created_by' => $request['owner_id'] ?? auth()->user()->id,
+                    'created_by' => $request['owner_id'] ?? auth()->id(),
                 ]);
 
                 return response()->json(
-                    ['success' => 'Metode pembayaran berhasil ditambahkan!']
+                    ['success' => 'Metode pembayaran berhasil ditambahkan!'],
+                    Response::HTTP_OK
                 );
             } catch (\Exception $ex) {
                 return response()->json(
-                    ['errors' => 'Terjadi suatu kesalahan!']
+                    ['errors' => 'Terjadi suatu kesalahan!'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
         }
@@ -77,12 +84,14 @@ class PaymentMethodController extends Controller
 
     public function edit(PaymentMethod $paymentMethod)
     {
-        if (request()->ajax()) {
-            return response()->json([
+        return (request()->ajax())
+            ? response()->json([
                 'payment_method' => $paymentMethod,
-                'owners' => User::whereHas('role', fn ($q) => $q->whereName('owner'))->get(),
-            ]);
-        }
+                'owners' => User::query()
+                    ->whereHas('role', fn ($q) => $q->whereName('owner'))
+                    ->get(),
+            ], Response::HTTP_OK)
+            : response()->noContent();
     }
 
     public function update(PaymentMethodRequest $request, PaymentMethod $paymentMethod)
@@ -97,9 +106,12 @@ class PaymentMethodController extends Controller
                     'created_by' => $request['owner_id'] ?? $paymentMethod->created_by,
                 ]);
 
-                return response()->json(['success' => 'Berhasil diubah.']);
+                return response()->json(['success' => 'Berhasil diubah.'], Response::HTTP_OK);
             } catch (\Exception $ex) {
-                return response()->json(['errors' => 'Terjadi suatu kesalahan.']);
+                return response()->json(
+                    ['errors' => 'Terjadi suatu kesalahan.'],
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
         }
     }

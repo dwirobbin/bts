@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Street;
-use App\Models\Airline;
+use App\Models\SpeedBoat;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +19,7 @@ class TicketFactory extends Factory
     public function definition(): array
     {
         return [
-            'airline_id'    => fake()->numberBetween(1, Airline::count()),
+            'speedboat_id'    => fake()->numberBetween(1, SpeedBoat::count()),
             'street_id'     => fake()->numberBetween(1, Street::count()),
             'go_price'      => fake()->optional(1)->numberBetween(80000, 150000),
             'goback_price'  => fake()->optional(0.4)->numberBetween(150000, 285000),

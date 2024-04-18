@@ -34,12 +34,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($orders as $order)
+                                    @foreach ($orders as $key => $order)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $order->order_code }}</td>
                                             <td>{{ $order->user->name }}</td>
-                                            <td>{{ $order->ticket->airline->name }}</td>
+                                            <td>{{ $order->ticket->speedboat->name }}</td>
                                             <td>{{ $order->ticket->street->from_route . '-' . $order->ticket->street->to_route }}</td>
                                             <td>{{ $order->amount }}</td>
                                             <td>{{ $order->trip_type }}</td>
@@ -50,7 +50,7 @@
                                                 @if (!preg_match('[driver]', auth()->user()->role->name))
                                                     @if (preg_match('[admin|owner]', auth()->user()->role->name))
                                                         <a href="/dashboard/print?order={{ $order->order_code }}" target="_blank">
-                                                            <x-button class="btn-xs btn-success">Cetak</x-button>
+                                                            <x-button class="btn-xs btn-success" :varCheck="$order->transaction->status == false">Cetak</x-button>
                                                         </a>
                                                     @elseif (auth()->user()->role->name === 'customer' && $order->transaction->status == true)
                                                         <a href="/dashboard/print?order={{ $order->order_code }}" target="_blank">
@@ -58,8 +58,8 @@
                                                         </a>
                                                     @endif
 
-                                                    <x-button class='btn-xs btn-warning position-relative' dataToggle="modal"
-                                                        dataTarget="#modal-complaint">
+                                                    <x-button class='btn-xs btn-warning position-relative' id="complaints" dataToggle="modal"
+                                                        dataTarget="#modal-complaint" :dataId="$order->id">
                                                         Lapor
 
                                                         @if (auth()->user()->role->name === 'customer')
@@ -78,7 +78,6 @@
                                                             @endif
                                                         @endif
                                                     </x-button>
-                                                    @include('pages.orders._complaint')
 
                                                     @if (preg_match('[admin|owner]', auth()->user()->role->name))
                                                         <x-button id='delete-order' data-id='{{ $order->id }}'
@@ -99,6 +98,8 @@
             </div>
         </div>
     </section>
+
+    @include ('pages.orders._complaint')
 @endsection
 
 @push('scripts')
@@ -261,6 +262,37 @@
                     loadingRecords: 'Sedang memproses...',
                     processing: 'Memproses...',
                 },
+            });
+
+            $('#orders-table').on('click', '#complaints', function() {
+                let orderId = $(this).data('id');
+
+                $.get(`{{ url('dashboard/complaints/${orderId}') }}`, function(data) {
+                    $('#order-id').val(orderId);
+                    let html = ``;
+
+                    $.each(data.complaints, function(_, complaint) {
+                        let cssCust = '';
+
+                        if (complaint.user.id == {{ Auth::id() }}) {
+                            cssCust = 'justify-content-end';
+                        }
+
+                        html += `
+                            <div class="d-flex flex-row align-items-center mb-2 ${cssCust}">
+                                <img src="{{ asset('app-src/img/default_profile.jpg') }}" alt="Profile Image"
+                                    style="max-width: 30px; max-height: 30px" class="rounded-circle mx-2">
+
+                                <label class="my-1">${complaint.user.name}</label>
+                            </div>
+                            <p class="border rounded mx-2 mb-4 p-2 font-weight-normal text-left">
+                                ${complaint.body}
+                            </p>
+                        `;
+                    });
+
+                    $('#complaint-chats').html(html);
+                });
             });
 
             $('#orders-table').on('click', '#delete-order', function() {

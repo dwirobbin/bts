@@ -1,20 +1,20 @@
-<div class="modal fade" id="modal-create-airline">
+<div class="modal fade" id="modal-create-speedboat">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="form-create-airline" action="{{ url('dashboard/airlines/store') }}" method="post">
+            <form id="form-create-speedboat" action="{{ url('dashboard/speedboats/store') }}" method="post">
                 @csrf
                 <div class="modal-header">
                     <h4 class="modal-title">Tambah {{ $title }}</h4>
                     <x-button class="close" data-dismiss="modal"><span>&times;</span></x-button>
                 </div>
                 <div class="modal-body pb-2">
-                    <ul id="error-create-airline" class="pl-0 mb-0"></ul>
+                    <ul id="error-create-speedboat" class="pl-0 mb-0"></ul>
 
                     <div class="form-group mb-3">
-                        <x-label for="airlinename-create">
+                        <x-label for="speedboatname-create">
                             Nama {{ $title }}<span class="text-danger font-weight-bold">*</span>
                         </x-label>
-                        <x-input id="airlinename-create" name="name" placeholder="Nama {{ $title }}" />
+                        <x-input id="speedboatname-create" name="name" placeholder="Nama {{ $title }}" />
                     </div>
 
                     <div class="form-group mb-3">
@@ -26,7 +26,7 @@
 
                     <div class="form-group mb-3">
                         <x-label for="status-create">Status {{ $title }}</x-label>
-                        <x-select id="status-create" name="status_id" emptyOptTxt="Pilih Status" />
+                        <x-select id="status-create" name="status" emptyOptTxt="Pilih Status" />
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
@@ -41,26 +41,26 @@
 @push('_scripts')
     <script>
         $(document).ready(function() {
-            $('#modal-create-airline').on('hidden.bs.modal', function(e) {
-                $(this).find('#form-create-airline')[0].reset();
+            $('#modal-create-speedboat').on('hidden.bs.modal', function(e) {
+                $(this).find('#form-create-speedboat')[0].reset();
             });
 
-            $('#form-create-airline').on('submit', function(e) {
+            $('#form-create-speedboat').on('submit', function(e) {
                 e.preventDefault();
 
                 let $form = $(this);
 
                 $.post($form.attr("action"), $form.serialize())
                     .done(function(data) {
-                        $('#modal-create-airline').modal('hide');
-                        $('#form-create-airline')[0].reset();
+                        $('#modal-create-speedboat').modal('hide');
+                        $('#form-create-speedboat')[0].reset();
 
                         Toast.fire({
                             icon: 'success',
                             title: `${data.success}`
                         });
 
-                        $("#airlines-table").DataTable().ajax.reload();
+                        $("#speedboats-table").DataTable().ajax.reload();
                     })
                     .fail(function(jqXHR, status) {
                         if (status === 'error') {
@@ -76,7 +76,7 @@
                                 );
                             }, 5000);
 
-                            $('#error-create-airline').html(html);
+                            $('#error-create-speedboat').html(html);
                         }
                     }, 'json')
             });

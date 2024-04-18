@@ -2,39 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\Order;
-use App\Models\Ticket;
-use App\Models\Passenger;
-use App\Models\Transaction;
-use Illuminate\Http\Request;
-use App\Models\PaymentMethod;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
+use App\Models\{Order, Ticket, Passenger, Transaction, PaymentMethod};
 use App\Http\Requests\OrderRequest;
-use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
+use Illuminate\Http\{Request, Response};
+use Illuminate\Support\Facades\{DB, Storage};
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $query = Order::query()->with([
-            'user:id,name',
-            'ticket' => fn ($query) => $query->with([
-                'airline:id,name', 'street:id,from_route,to_route'
-            ]),
-            'complaints',
-        ]);
+        $query = Order::query()
+            ->with([
+                'user:id,name',
+                'ticket' => fn ($query) => $query->with([
+                    'speedBoat:id,name', 'street:id,from_route,to_route'
+                ]),
+                'complaints'
+            ]);
 
         if (auth()->user()->role->name === 'owner') {
             $query->whereHas('ticket', fn ($q) => $q->whereHas(
-                'airline',
-                fn ($q) => $q->whereOwnerId(auth()->user()->id)
+                'speedBoat',
+                fn ($q) => $q->whereOwnerId(auth()->id())
             ));
         }
 
         if (auth()->user()->role->name == 'customer') {
-            $query->whereUserId(auth()->user()->id);
+            $query->whereUserId(auth()->id());
         }
 
         return view('pages.orders.index', [
@@ -46,23 +41,24 @@ class OrderController extends Controller
 
     public function getPaymentMethods(Request $request)
     {
-        $airlineId = Ticket::find($request->ticket_id, ['airline_id'])->airline_id;
+        $speedBoatId = Ticket::query()->find($request->ticket_id, ['speedboat_id'])->speedboat_id;
 
-        $paymentMethod = PaymentMethod::whereHas(
+        $paymentMethod = PaymentMethod::query()->whereHas(
             'createdBy',
             fn ($q) => $q->whereHas(
-                'airline',
-                fn ($q) => $q->whereId($airlineId)
+                'speedBoat',
+                fn ($q) => $q->whereId($speedBoatId)
             )
         )->pluck('method', 'id');
 
-        return response()->json($paymentMethod);
+        return response()->json($paymentMethod, Response::HTTP_OK);
     }
 
     public function create()
     {
-        $tickets = Ticket::select('id', 'airline_id', 'street_id', 'stock')
-            ->with(['airline:id,name', 'street:id,from_route,to_route'])
+        $tickets = Ticket::query()
+            ->select('id', 'speedboat_id', 'street_id', 'stock', 'price')
+            ->with(['speedBoat:id,name', 'street:id,from_route,to_route'])
             ->where('stock', '!=', 0)
             ->get();
 
@@ -75,13 +71,11 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
-        $request->validated();
-
         try {
             DB::beginTransaction();
 
-            $order = Order::create([
-                'user_id'       => auth()->user()->id,
+            $order = Order::query()->create([
+                'user_id'       => auth()->id(),
                 'order_code'    => strval(number_format(microtime(true) * 1000, 0, '.', '')),
                 'ticket_id'     => $request['ticket_data']['ticket_id'],
                 'trip_type'     => $request['ticket_data']['trip_type'],
@@ -99,18 +93,19 @@ class OrderController extends Controller
                 ];
             }
 
-            Passenger::insert($passengerData);
+            Passenger::query()->insert($passengerData);
 
-            Transaction::create([
+            Transaction::query()->create([
                 'order_id' => $order->id,
                 'paymentmethod_id' => $request['payment_data']['paymentmethod_id'],
                 'name_account' => str($request['payment_data']['senderaccount_name'])->title(),
                 'from_account' => str($request['payment_data']['senderaccount_number'])->title(),
-                'total' => (int) $request['payment_data']['total_price'],
+                'total' => (int) str_replace('.', '', $request['payment_data']['total_price']),
                 'status' => false,
             ]);
 
-            Ticket::whereId($request['ticket_data']['ticket_id'])
+            Ticket::query()
+                ->whereId($request['ticket_data']['ticket_id'])
                 ->decrement('stock', count($request['passenger_data']['name']));
 
             DB::commit();
@@ -119,7 +114,7 @@ class OrderController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
 
-            return redirect()->back()->withError($e->getMessage())->withInput();
+            return redirect()->back()->withError('Terjadi Suatu Kesalahan')->withInput();
         }
     }
 
@@ -129,9 +124,7 @@ class OrderController extends Controller
             try {
                 $filePath = 'public/images/' . $order->transaction->image;
 
-                if (Storage::exists($filePath)) {
-                    Storage::delete($filePath);
-                }
+                if (Storage::exists($filePath)) Storage::delete($filePath);
 
                 $order->transaction()->delete();
                 $order->passengers()->delete();

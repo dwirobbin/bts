@@ -16,7 +16,9 @@ class Complaint extends Model
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = [
+        'id',
+    ];
 
     /**
      * Get the user that owns the Complaint

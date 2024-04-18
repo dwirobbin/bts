@@ -21,7 +21,6 @@ class PaymentMethodFactory extends Factory
         return [
             'method' => fake()->unique()->randomElement($methods),
             'target_account' => fake()->randomNumber(9),
-            // 'created_by' => fake()->numberBetween(2)
             'created_by' => 2
         ];
     }

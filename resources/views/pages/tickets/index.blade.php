@@ -50,6 +50,8 @@
             </div>
         </div>
     </section>
+
+    @include('pages.tickets._edit')
 @endsection
 
 @push('scripts')
@@ -204,8 +206,8 @@
                         data: 'DT_RowIndex',
                     },
                     {
-                        name: 'airline.name',
-                        data: 'airline.name',
+                        name: 'speed_boat.name',
+                        data: 'speed_boat.name',
                     },
                     {
                         name: 'street.from_route',
@@ -238,9 +240,9 @@
                 $('#error-create-ticket').html('');
 
                 $.get(`{{ url('dashboard/tickets/create') }}`, function(data) {
-                    $('#airlineid-create').html('<option value="" selected>Pilih Speedboat</option>');
-                    $.each(data.airlines, function(_, airline) {
-                        $('#airlineid-create').append(new Option(airline.name, airline.id));
+                    $('#speedboatid-create').html('<option value="" selected>Pilih Speedboat</option>');
+                    $.each(data.speed_boats, function(_, speedBoat) {
+                        $('#speedboatid-create').append(new Option(speedBoat.name, speedBoat.id));
                     })
 
                     $('#streetid-create').html('<option value="" selected>Pilih Rute</option>');
@@ -262,7 +264,7 @@
                 $.get(`{{ url('dashboard/tickets/${ticketId}/edit') }}`, function(data) {
                     $('#ticketid-edit').val(data.ticket.id);
                     $('#hoursofdeparture-edit').val(data.ticket.hours_of_departure);
-                    $('#price-edit').val(data.ticket.price);
+                    $('#price-edit').val(formatRupiah((data.ticket.price).toString()));
                     $('#stock-edit').val(data.ticket.stock);
 
                     $('#modal-edit-ticket').modal('show');
@@ -306,6 +308,23 @@
                 })
             });
         })
+
+        const formatRupiah = (angka, prefix) => {
+            var number_string = angka.replace(/[^,\d]/g, "").toString(),
+                split = number_string.split(","),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            // tambahkan titik jika yang di input sudah menjadi angka ribuan
+            if (ribuan) {
+                separator = sisa ? "." : "";
+                rupiah += separator + ribuan.join(".");
+            }
+
+            rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+            return prefix == undefined ? rupiah : rupiah ? "Rp. " + rupiah : "";
+        }
     </script>
 
     @stack('_scripts')

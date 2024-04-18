@@ -44,6 +44,8 @@
             </div>
         </div>
     </section>
+
+    @include('pages.streets._edit')
 @endsection
 
 @push('scripts')

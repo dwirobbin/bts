@@ -17,10 +17,10 @@
                     <br>
                     <address>
                         <strong>BTS</strong><br>
-                        Jl. Jalur 3, Telang<br>
-                        Kab. Banyuasin, Kec. Sumber Marga Telang, Kota Banyuasin<br>
+                        Jl. Silaberanti No.123<br>
+                        Kec. Seberang Ulu II, Kota. Palembang<br>
                         Phone: 082252948897<br>
-                        Email: btsjago@gmail.com
+                        Email: bts@gmail.com
                     </address>
                 </div>
                 <div class="col-sm-4 invoice-col">
@@ -75,7 +75,7 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $passenger->name }}</td>
-                                    <td>{{ $order->ticket->airline->name }}</td>
+                                    <td>{{ $order->ticket->speedboat->name }}</td>
                                     <td>
                                         {{ $order->ticket->street->from_route }} - {{ $order->ticket->street->to_route }}
                                     </td>
@@ -97,7 +97,7 @@
                 </div>
                 <div class="col-sm-12">
                     <h6 class="font-weight-bold">
-                        Total: Rp {{ number_format($order->transaction->total, 2, ',', '.') }}
+                        Total: Rp {{ number_format($order->transaction->total, 0, ',', '.') }}
                     </h6>
                     <p class="lead">
                         Your Payment Was Successful &nbsp; &nbsp;<i class="fas fa-check"></i> <br>

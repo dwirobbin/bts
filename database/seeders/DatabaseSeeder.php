@@ -4,15 +4,17 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\UserSeeder;
-use Database\Seeders\OrderSeeder;
-use Database\Seeders\StreetSeeder;
-use Database\Seeders\TicketSeeder;
-use Database\Seeders\AirlineSeeder;
-use Database\Seeders\PassengerSeeder;
-use Database\Seeders\TransactionSeeder;
-use Database\Seeders\PaymentMethodSeeder;
+use Database\Seeders\{
+    RoleSeeder,
+    UserSeeder,
+    OrderSeeder,
+    StreetSeeder,
+    TicketSeeder,
+    SpeedBoatSeeder,
+    PassengerSeeder,
+    TransactionSeeder,
+    PaymentMethodSeeder,
+};
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,13 +33,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
-            AirlineSeeder::class,
+            SpeedBoatSeeder::class,
             StreetSeeder::class,
             PaymentMethodSeeder::class,
             TicketSeeder::class,
-            OrderSeeder::class,
-            TransactionSeeder::class,
-            PassengerSeeder::class,
+            // OrderSeeder::class,
+            // TransactionSeeder::class,
+            // PassengerSeeder::class,
 
         ]);
     }

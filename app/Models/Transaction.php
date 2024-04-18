@@ -15,7 +15,9 @@ class Transaction extends Model
      *
      * @var array
      */
-    protected $guarded = ['id'];
+    protected $guarded = [
+        'id',
+    ];
 
     /**
      * Get the order that owns the Transaction

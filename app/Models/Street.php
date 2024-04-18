@@ -14,5 +14,8 @@ class Street extends Model
      *
      * @var array
      */
-    protected $fillable = ['from_route', 'to_route'];
+    protected $fillable = [
+        'from_route',
+        'to_route',
+    ];
 }

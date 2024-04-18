@@ -8,9 +8,7 @@ use App\Models\Role;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Cviebrock\EloquentSluggable\Sluggable;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\{HasOne, HasMany, BelongsTo};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -67,13 +65,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the airline associated with the User
+     * Get the speedboat associated with the User
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function airline(): HasOne
+    public function speedBoat(): HasOne
     {
-        return $this->hasOne(Airline::class, 'owner_id', 'id');
+        return $this->hasOne(SpeedBoat::class, 'owner_id', 'id');
     }
 
     /**
