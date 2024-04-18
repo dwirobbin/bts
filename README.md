@@ -1,4 +1,19 @@
-# How To Run This Program ?
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+
+<p align="center">
+<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
+
+## Requirements
+
+-   Laravel 10.x (PHP >= 8.1)
+-   Composer
+-   MySQL 8.0
+
+# How to install ?
 
 Berikut adalah langkah-langkahnya:
 
@@ -38,30 +53,13 @@ Env disini berguna sebagai tempat untuk melakukan pengaturan bagi project kita
 
 # Data Akun
 
-### Role (Admin)
+| **Role** | **Email**       | **Password** |
+| -------- | --------------- | ------------ |
+| Admin    | admin@gmail.com | password     |
+| Owner    | wiwan@gmail.com | password     |
+| Driver   | mijub@gmail.com | password     |
+| Customer | rundi@gmail.com | password     |
 
-```
-Email=admin@gmail.com
-Password=password
-```
+## License
 
-### Role (Owner)
-
-```
-Email=wiwan@gmail.com
-Password=password
-```
-
-### Role (Driver)
-
-```
-Email=mijub@gmail.com
-Password=password
-```
-
-### Role (Customer)
-
-```
-Email=rundi@gmail.com
-Password=password
-```
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
