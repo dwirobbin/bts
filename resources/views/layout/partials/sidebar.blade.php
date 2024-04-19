@@ -7,6 +7,18 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
+        <!-- Sidebar user (optional) -->
+        <div class="user-panel mt-3 pb-3 d-flex">
+            <div class="image">
+                <img src="{{ asset('app-src/img/default_profile.jpg') }}" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="javascript:void();" id="user-link" class="d-block">
+                    <span>{{ auth()->user()?->name }}</span>
+                </a>
+            </div>
+        </div>
+
         <!-- Sidebar Menu -->
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
