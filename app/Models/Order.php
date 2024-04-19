@@ -28,6 +28,13 @@ class Order extends Model
         );
     }
 
+    public function backDate(): Attribute
+    {
+        return new Attribute(
+            get: fn ($value) => Carbon::parse($value)->format('d/m/Y'),
+        );
+    }
+
     /**
      * Get the user that owns the Order
      *
