@@ -52,19 +52,35 @@
 
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-4" id="godate-div">
-                                        <x-label for="godate-create">
+                                        <x-label for="goDateCreate">
                                             Tanggal Pergi<span class="text-danger font-weight-bold">*</span>
                                         </x-label>
-                                        <x-date-input id="godate-create" name="ticket_data[go_date]" placeholder="Tanggal Pergi"
-                                            value="{{ old('ticket_data.go_date') }}" />
+                                        <div class="input-group date" id="goDateCreate" data-target-input="nearest">
+                                            <x-date-input type='text' id="goDateInputCreate" class="datetimepicker-input"
+                                                name="ticket_data[go_date]" placeholder="Tanggal Pergi" value="{{ old('ticket_data.go_date') }}"
+                                                data-target="#goDateCreate" />
+                                            <div class="input-group-append" data-target="#goDateCreate" data-toggle="datetimepicker">
+                                                <div class="input-group-text">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <x-error name="ticket_data.go_date" />
                                     </div>
                                     <div class="col-md-6 form-group mb-4 d-none" id="backdate-div">
-                                        <x-label for="backdate-create">
+                                        <x-label for="backDateCreate">
                                             Tanggal Pulang<span class="text-danger font-weight-bold">*</span>
                                         </x-label>
-                                        <x-date-input id="backdate-create" name="ticket_data[back_date]" placeholder="Tanggal Pulang"
-                                            value="{{ old('ticket_data.back_date') }}" />
+                                        <div class="input-group date" id="backDateCreate" data-target-input="nearest">
+                                            <x-date-input type='text' id="backDateInputCreate" class="datetimepicker-input"
+                                                name="ticket_data[back_date]" placeholder="Tanggal Pulang" value="{{ old('ticket_data.back_date') }}"
+                                                data-target="#backDateCreate" />
+                                            <div class="input-group-append" data-target="#backDateCreate" data-toggle="datetimepicker">
+                                                <div class="input-group-text">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <x-error name="ticket_data.back_date" />
                                     </div>
                                 </div>
@@ -260,6 +276,16 @@
 
     <script>
         $(document).ready(function() {
+            $('#goDateCreate').datetimepicker({
+                format: 'L',
+                format: 'DD/MM/YYYY'
+            });
+
+            $('#backDateCreate').datetimepicker({
+                format: 'L',
+                format: 'DD/MM/YYYY'
+            });
+
             $('#ticketid-create').change(function() {
                 var $paymentMethod = $('#selectedpaymentmethod-create');
 
