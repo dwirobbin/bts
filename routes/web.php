@@ -104,7 +104,7 @@ Route::prefix('/dashboard')->middleware('auth')->group(function () {
 
     Route::prefix('complaints')->controller(ComplaintController::class)->group(function () {
         Route::post('/', 'store');
-        Route::get('/complaints/{order:id}', 'show');
+        Route::get('/{order:id}', 'show');
     });
 
     Route::get('print', PrintController::class);
