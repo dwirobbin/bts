@@ -79,8 +79,10 @@ class OrderController extends Controller
                 'order_code'    => strval(number_format(microtime(true) * 1000, 0, '.', '')),
                 'ticket_id'     => $request['ticket_data']['ticket_id'],
                 'trip_type'     => $request['ticket_data']['trip_type'],
-                'go_date'       => Carbon::createFromTimestamp(strtotime($request['ticket_data']['go_date']))->format('Y-m-d'),
-                'back_date'     => !is_null($request['ticket_data']['back_date']) ? Carbon::createFromTimestamp(strtotime($request['ticket_data']['back_date']))->format('Y-m-d') : null,
+                'go_date'       => Carbon::createFromFormat('d/m/Y', $request['ticket_data']['go_date'])->format('Y-m-d'),
+                'back_date'     => !is_null($request['ticket_data']['back_date']) ? Carbon::createFromFormat('d/m/Y', $request['ticket_data']['back_date'])->format('Y-m-d') : null,
+                // 'go_date'       => Carbon::createFromTimestamp(strtotime($request['ticket_data']['go_date']))->format('Y-m-d'),
+                // 'back_date'     => !is_null($request['ticket_data']['back_date']) ? Carbon::createFromTimestamp(strtotime($request['ticket_data']['back_date']))->format('Y-m-d') : null,
                 'amount'        => count($request['passenger_data']['name']),
             ]);
 
