@@ -44,7 +44,7 @@
                                             <td>{{ $order->amount }}</td>
                                             <td>{{ $order->trip_type }}</td>
                                             <td>{{ $order->go_date }}</td>
-                                            <td>{{ $order->back_date != null ? Carbon\Carbon::parse($order->back_date)->format('d/m/Y') : 'Hanya Pergi' }}
+                                            <td>{{ $order->back_date }}
                                             </td>
                                             <td>
                                                 @if (!preg_match('[driver]', auth()->user()->role->name))
