@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="{{ asset('app-src/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('app-src/css/adminlte.min.css') }}">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="{{ asset('app-src/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
     <!-- Page specific style -->
     @stack('styles')
 
@@ -89,6 +91,10 @@
     <script src="{{ asset('app-src/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('app-src/js/adminlte.min.js') }}"></script>
+    <!-- InputMask -->
+    <script src="{{ asset('app-src/plugins/moment/moment.min.js') }}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('app-src/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
     <!-- Toggle Switch Dark Or Light -->
     <script>
         var toggleSwitch = document.querySelector('.custom-switch input[type="checkbox"]');
