@@ -30,8 +30,8 @@
         @auth
             <li class="nav-item dropdown user-menu">
                 <a href="javascript:void(document.querySelector('#user-link').style.color = 'red')" id="user-link" class="nav-link">
-                    {{-- <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random"
-                        class="user-image img-circle elevation-2" alt="User Image"> --}}
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random"
+                        class="user-image img-circle elevation-2" alt="User Image">
                     <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
                 </a>
             </li>
